@@ -8,7 +8,7 @@ import { NotificationProvider } from "web3uikit"
 // Inizializzazione del client Apollo per effettuare le query da the graph
 const client = new ApolloClient({
     cache: new InMemoryCache(),
-    uri: "https://api.studio.thegraph.com/query/48551/nft-marketplace/version/latest", // endpoint per le query al subgraph (letta dal sito)
+    uri: "https://api.studio.thegraph.com/query/48551/products-authenticity/version/latest", // endpoint per le query al subgraph (letta dal sito)
 })
 
 function App({ Component, pageProps }) {

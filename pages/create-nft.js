@@ -9,7 +9,7 @@ export default function CreateNft() {
     const intChainId = parseInt(chainId)
 
     return (
-        <div className={styles.container}>
+        <div className="px-8 py-4">
             {intChainId ? (
                 <CertificateGeneration></CertificateGeneration>
             ) : (

@@ -2,8 +2,10 @@ import styles from "../styles/Home.module.css"
 import { useQuery, gql } from "@apollo/client"
 import networkMapping from "../constants/networkMapping.json"
 import { useMoralis } from "react-moralis"
-import GET_ACTIVE_ITEMS from "../constants/subgraphQueries" // Tutte le query le definiamo in un singolo file che importiamo al bisogno
+import { GET_ACTIVE_ITEMS } from "../constants/subgraphQueries" // Tutte le query le definiamo in un singolo file che importiamo al bisogno
 import NFTBox from "../components/NFTBox" // Component per mostrare l'immagine dell'NFT
+import LoadComponent from "@/components/LoadComponent"
+import Timer from "@/components/Timer"
 
 export default function Home() {
     const { isWeb3Enabled, chainId } = useMoralis() //Ricaviamo l'id della rete tramite l'hhok useMoralis
@@ -15,13 +17,16 @@ export default function Home() {
 
     return (
         <div className="container mx-auto">
-            <h1 className="py-4 px-4 font-bold text-2xl">
+            <h1 className="py-4 px-8 font-bold text-2xl">
                 Product Tokens Available
             </h1>
-            <div className="flex flex-wrap">
-                Hello! Here you can see NFTs related to products that are
-                currently on the market. Each NFT is an authenticity proof of
-                the corresponding product
+            <div className="px-4 flex flex-wrap ">
+                <p className="py-4 px-4">
+                    Hello! Here you can see NFTs related to products that are
+                    currently on the market. Each NFT is an authenticity proof
+                    of the corresponding product. Connect your wallet to start!
+                </p>
+
                 {
                     // Utilizziamo ora i risultati della query a the graph
                     // Se la query non è ancora terminata (loading è true) oppure l'elemento listedNfts non esiste allora mostriamo la scritta Loading
@@ -29,8 +34,12 @@ export default function Home() {
                     // La funzione map ci permette di iterare sul contenuto della variabile ed eseguire una funzione che passiamo come parametro su ciascun elemento.
                     // Alla map passiamo una arrow function che prende come input un generico elemento di listedNfts (che chiamiamo nft) e va a stamapre su console, per ogni elemento, alcune informazioni estratte tramite la query
                     //
-                    loading || !listedNfts ? (
-                        <div>Loading...</div>
+                    loading ? (
+                        <div className="px-4">
+                            <LoadComponent></LoadComponent>
+                        </div>
+                    ) : !listedNfts.activeItems ? (
+                        <div>No Token available at this moment</div>
                     ) : (
                         listedNfts.activeItems.map((nft) => {
                             // listedNfts è l'oggetto ritornato dalla query. A partire da esso accediamo prima al vettore activeItems ed è su questo vettore che possiamo richiamare al funzione map
@@ -39,9 +48,7 @@ export default function Home() {
                             const { nftAddress, tokenId, seller } = nft
                             // La funzione passata alla map ritorna del codice HTML innestato con JavaScript per msotrare le informazioni estratte
                             return (
-                                <div>
-                                    NftAddress: {nftAddress}. TokenID: {tokenId}
-                                    . Seller: {seller}
+                                <div className="py-4 place-content-center">
                                     <NFTBox //Inseriamo il component per il box dell'NFT. Passiamo i parametri che esso richiede in input
                                         nftAddress={nftAddress}
                                         tokenId={tokenId}

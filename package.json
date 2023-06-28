@@ -12,6 +12,7 @@
     "@apollo/client": "^3.7.15",
     "@walletconnect/ethereum-provider": "^2.8.1",
     "@walletconnect/modal": "^2.4.7",
+    "date-fns": "^2.30.0",
     "graphql": "^16.6.0",
     "magic-sdk": "^17.4.0",
     "moralis": "^2.22.2",

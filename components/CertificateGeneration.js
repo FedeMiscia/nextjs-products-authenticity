@@ -1,6 +1,7 @@
-import { useWeb3Contract, useMoralis } from "react-moralis"
+import { useWeb3Contract, useMoralis, useChain } from "react-moralis"
 import { contractsAddresses, nftAbi, nftAddresses } from "@/constants"
 import { useNotification } from "web3uikit"
+import Home from "@/pages"
 
 export default function CertificateGeneration() {
     const { chainId } = useMoralis() // Moralis conosce il chain Id in quanto metamask passa tutte le informazioni al Moralis Provider il quale a sua volta passa tutte le informazioni ai components interni al tag <MoralisProvider>
@@ -23,26 +24,28 @@ export default function CertificateGeneration() {
 
     // Handler da richiamare quando la transazione ha successo
     const handleSuccess = async function (tx) {
-        await tx.wait(1)
-        handleNewNotification(tx)
+        const mintTxReceipt = await tx.wait(1)
+        const tokenId = mintTxReceipt.events[0].args.tokenId // Preleviamo il token ID assegnato all'NFT tramite l'evento emesso
+        handleNewNotification(tx, tokenId)
     }
 
-    // Funzione richiamata nella handSuccess. Qui andiamo a definire le caratteristiche del pop up
-    const handleNewNotification = function () {
+    // Funzione richiamata nella handleSuccess. Qui andiamo a definire le caratteristiche del pop up
+    const handleNewNotification = async (tx, tokenId) => {
+        await tx.wait(1) // Attendiamo la conferma di un blocco a seguito della transazione e poi il popup apparirà
         dispatch({
             type: "info",
-            message: "Transaction Complete",
-            title: "Tx Notification",
+            message: `Generated NFT with ID: ${tokenId}`,
+            title: "Token Created",
             position: "topR",
-            icon: "bell",
         })
+        return <Home></Home>
     }
 
     return (
-        <div>
-            Hi from certificate generation
+        <div className="container mx-auto">
+            Product Brand can mine a new token
             {nftAddresses ? (
-                <div>
+                <div className="py-6">
                     <button
                         onClick={async function () {
                             await mintNft({
@@ -52,11 +55,11 @@ export default function CertificateGeneration() {
                         }}
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded"
                     >
-                        Genera certificato
+                        Create Product Token
                     </button>
                 </div>
             ) : (
-                <div>No Product NFT detected</div>
+                <div>NFT Address not found</div>
             )}
         </div>
     )
